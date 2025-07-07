@@ -13,7 +13,7 @@ import (
 
 	"github.com/docker/distribution/manifest/manifestlist"
 	"github.com/docker/distribution/manifest/schema2"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/registry"
 )
 
 // Registry defines the client for retrieving information from the registry API.
@@ -52,7 +52,7 @@ type Opt struct {
 }
 
 // New creates a new Registry struct with the given URL and credentials.
-func New(ctx context.Context, auth types.AuthConfig, opt Opt) (*Registry, error) {
+func New(ctx context.Context, auth registry.AuthConfig, opt Opt) (*Registry, error) {
 	transport := http.DefaultTransport
 
 	if opt.Insecure {
@@ -66,7 +66,7 @@ func New(ctx context.Context, auth types.AuthConfig, opt Opt) (*Registry, error)
 	return newFromTransport(ctx, auth, transport, opt)
 }
 
-func newFromTransport(ctx context.Context, auth types.AuthConfig, transport http.RoundTripper, opt Opt) (*Registry, error) {
+func newFromTransport(ctx context.Context, auth registry.AuthConfig, transport http.RoundTripper, opt Opt) (*Registry, error) {
 	if len(opt.Domain) < 1 || opt.Domain == "docker.io" {
 		opt.Domain = auth.ServerAddress
 	}

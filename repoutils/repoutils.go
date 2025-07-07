@@ -7,7 +7,7 @@ import (
 	"github.com/docker/cli/cli/config"
 	clitypes "github.com/docker/cli/cli/config/types"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/docker/api/types"
+	registrytypes "github.com/docker/docker/api/types/registry"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,9 +21,9 @@ const (
 // GetAuthConfig returns the docker registry AuthConfig.
 // Optionally takes in the authentication values, otherwise pulls them from the
 // docker config file.
-func GetAuthConfig(username, password, registry string) (types.AuthConfig, error) {
+func GetAuthConfig(username, password, registry string) (registrytypes.AuthConfig, error) {
 	if username != "" && password != "" && registry != "" {
-		return types.AuthConfig{
+		return registrytypes.AuthConfig{
 			Username:      username,
 			Password:      password,
 			ServerAddress: registry,
@@ -32,25 +32,25 @@ func GetAuthConfig(username, password, registry string) (types.AuthConfig, error
 
 	dcfg, err := config.Load(config.Dir())
 	if err != nil {
-		return types.AuthConfig{}, fmt.Errorf("loading config file failed: %v", err)
+		return registrytypes.AuthConfig{}, fmt.Errorf("loading config file failed: %v", err)
 	}
 
 	// return error early if there are no auths saved
 	if !dcfg.ContainsAuth() {
 		// If we were passed a registry, just use that.
 		if registry != "" {
-			return setDefaultRegistry(types.AuthConfig{
+			return setDefaultRegistry(registrytypes.AuthConfig{
 				ServerAddress: registry,
 			}), nil
 		}
 
 		// Otherwise, just use an empty auth config.
-		return types.AuthConfig{}, nil
+		return registrytypes.AuthConfig{}, nil
 	}
 
 	authConfigs, err := dcfg.GetAllCredentials()
 	if err != nil {
-		return types.AuthConfig{}, fmt.Errorf("getting credentials failed: %v", err)
+		return registrytypes.AuthConfig{}, fmt.Errorf("getting credentials failed: %v", err)
 	}
 
 	// if they passed a specific registry, return those creds _if_ they exist
@@ -92,7 +92,7 @@ func GetAuthConfig(username, password, registry string) (types.AuthConfig, error
 		logrus.Debugf("Using registry %q with no authentication", registry)
 
 		// Otherwise just use the registry with no auth.
-		return setDefaultRegistry(types.AuthConfig{
+		return setDefaultRegistry(registrytypes.AuthConfig{
 			ServerAddress: registry,
 		}), nil
 	}
@@ -108,14 +108,14 @@ func GetAuthConfig(username, password, registry string) (types.AuthConfig, error
 	// Don't use any authentication.
 	// We should never get here.
 	fmt.Println("Not using any authentication")
-	return types.AuthConfig{}, nil
+	return registrytypes.AuthConfig{}, nil
 }
 
 // fixAuthConfig overwrites the AuthConfig's ServerAddress field with the
 // registry value if ServerAddress is empty. For example, config.Load() will
 // return AuthConfigs with empty ServerAddresses if the configuration file
 // contains only an "credsHelper" object.
-func fixAuthConfig(creds clitypes.AuthConfig, registry string) (c types.AuthConfig) {
+func fixAuthConfig(creds clitypes.AuthConfig, registry string) (c registrytypes.AuthConfig) {
 	c.Username = creds.Username
 	c.Password = creds.Password
 	c.Auth = creds.Auth
@@ -162,7 +162,7 @@ func addLatestTagSuffix(image string) string {
 	return image
 }
 
-func setDefaultRegistry(auth types.AuthConfig) types.AuthConfig {
+func setDefaultRegistry(auth registrytypes.AuthConfig) registrytypes.AuthConfig {
 	if auth.ServerAddress == "docker.io" {
 		auth.ServerAddress = DefaultDockerRegistry
 	}
