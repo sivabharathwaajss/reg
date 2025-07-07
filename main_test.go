@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/docker/docker/client"
-	"github.com/genuinetools/reg/testutils"
+	"github.com/sivabharathwaajss/reg/testutils"
 )
 
 const (

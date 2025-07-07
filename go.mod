@@ -1,6 +1,4 @@
-module github.com/genuinetools/reg
-
-replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.3-0.20190807103436-de736cf91b92
+module github.com/sivabharathwaajss/reg
 
 go 1.22.0
 

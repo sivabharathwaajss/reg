@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/genuinetools/reg/repoutils"
+	"github.com/sivabharathwaajss/reg/repoutils"
 )
 
 func TestDigestFromDockerHub(t *testing.T) {

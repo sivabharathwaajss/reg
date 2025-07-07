@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/coreos/clair/api/v3/clairpb"
-	"github.com/genuinetools/reg/registry"
+	"github.com/sivabharathwaajss/reg/registry"
 )
 
 // Vulnerabilities scans the given repo and tag.
